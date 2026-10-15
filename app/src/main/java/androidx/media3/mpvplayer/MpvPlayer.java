@@ -146,12 +146,12 @@ public final class MpvPlayer extends SimpleBasePlayer {
   private final MpvTimelineController timelineController;
   private final MpvStateBuilder stateBuilder;
   private final MpvSeekController seekController;
-  private @C.DecodeMode int decode;
+  private  int decode;
   @Nullable private AudioOutputListener audioOutputListener;
   private boolean handlingPlayerCommand;
 
   private MpvPlayer(
-      Context context, MpvPlayerConfig config, @C.DecodeMode int decode, Looper looper) {
+      Context context, MpvPlayerConfig config,  int decode, Looper looper) {
     super(looper);
     this.applicationContext = context.getApplicationContext();
     this.handler = Util.createHandler(getApplicationLooper(), null);
@@ -189,7 +189,7 @@ public final class MpvPlayer extends SimpleBasePlayer {
     return MpvLibrary.isAvailable();
   }
 
-  public void setDecode(@C.DecodeMode int decode) {
+  public void setDecode( int decode) {
     runOnPlayerLooper(() -> setDecodeInternal(decode));
   }
 
@@ -237,7 +237,7 @@ public final class MpvPlayer extends SimpleBasePlayer {
     return true;
   }
 
-  private void setDecodeInternal(@C.DecodeMode int decode) {
+  private void setDecodeInternal( int decode) {
     if (this.decode == decode) {
       return;
     }
@@ -867,7 +867,7 @@ public final class MpvPlayer extends SimpleBasePlayer {
     private final Context context;
     private MpvPlayerConfig config;
     private Looper looper;
-    private @C.DecodeMode int decode;
+    private  int decode;
     private boolean buildCalled;
 
     public Builder(Context context) {
@@ -884,7 +884,7 @@ public final class MpvPlayer extends SimpleBasePlayer {
     }
 
     @CanIgnoreReturnValue
-    public Builder setDecode(@C.DecodeMode int decode) {
+    public Builder setDecode( int decode) {
       checkState(!buildCalled);
       this.decode = decode;
       return this;

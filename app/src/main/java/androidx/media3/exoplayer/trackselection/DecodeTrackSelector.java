@@ -94,7 +94,7 @@ public class DecodeTrackSelector extends DefaultTrackSelector {
    * preferred. In software mode, only the corresponding FFmpeg renderer is allowed.
    */
   public final void setRendererDecodePreferences(
-      @C.DecodeMode int audioDecode, @C.DecodeMode int videoDecode) {
+       int audioDecode,  int videoDecode) {
     RendererDecodePreferences preferences = new RendererDecodePreferences(audioDecode, videoDecode);
     if (!preferences.equals(rendererDecodePreferences)) {
       rendererDecodePreferences = preferences;
@@ -125,7 +125,7 @@ public class DecodeTrackSelector extends DefaultTrackSelector {
       return false;
     }
     RendererDecodePreferences decodePreferences = rendererDecodePreferences;
-    @C.DecodeMode
+    
     int decode =
         group.type == C.TRACK_TYPE_AUDIO
             ? decodePreferences.audioDecode
@@ -143,7 +143,7 @@ public class DecodeTrackSelector extends DefaultTrackSelector {
   private static boolean isRendererAllowed(
       RendererCapabilities rendererCapability,
       @C.TrackType int trackType,
-      @C.DecodeMode int decode) {
+       int decode) {
     return decode != C.DECODE_SOFTWARE || isFfmpegRenderer(rendererCapability, trackType);
   }
 
@@ -171,11 +171,11 @@ public class DecodeTrackSelector extends DefaultTrackSelector {
 
   private static final class RendererDecodePreferences {
 
-    private final @C.DecodeMode int audioDecode;
-    private final @C.DecodeMode int videoDecode;
+    private final  int audioDecode;
+    private final  int videoDecode;
 
     private RendererDecodePreferences(
-        @C.DecodeMode int audioDecode, @C.DecodeMode int videoDecode) {
+         int audioDecode,  int videoDecode) {
       this.audioDecode = audioDecode;
       this.videoDecode = videoDecode;
     }
