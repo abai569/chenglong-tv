@@ -148,3 +148,36 @@ jobs:
           files: release-apks/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 必须在 Create Release 之后：manifest 指向的附件要已存在
+      - name: Publish update.json (in-app updater manifest)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          set -e
+          VER="${GITHUB_REF_NAME#v}"
+          BASE="https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}"
+          CODE=$(grep -oP 'versionCode\s+\K[0-9]+' app/build.gradle)
+          cat > /tmp/update.json <<EOF
+          {
+            "name": "${VER}",
+            "code": ${CODE},
+            "desc": "橙龙影视 ${VER}",
+            "arm64_v8a": "${BASE}/chenglong_${VER}_arm64_v8a.apk",
+            "armeabi_v7a": "${BASE}/chenglong_${VER}_armeabi_v7a.apk"
+          }
+          EOF
+          cat /tmp/update.json
+          # 切到 fongmi 分支（App 内 Github.raw("fongmi", "update.json") 读取的位置）
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin fongmi
+          git checkout fongmi
+          git reset --hard origin/fongmi
+          cp /tmp/update.json update.json
+          git add update.json
+          if git diff --cached --quiet; then
+            echo "update.json 无变化，跳过提交"
+          else
+            git commit -m "chore: update manifest for ${GITHUB_REF_NAME}"
+            git push origin fongmi
+          fi

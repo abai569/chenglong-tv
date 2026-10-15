@@ -356,6 +356,9 @@
     <string name="update_version">發現新版本 <xliff:g name="name">%s</xliff:g></string>
     <string name="update_check">正在檢查更新…</string>
     <string name="update_confirm">更新</string>
+    <string name="update_none">檢查更新失敗，請稍後重試</string>
+    <string name="update_latest">已是最新版本</string>
+    <string name="update_downloading">開始下載…</string>
 
     <!-- Crash -->
     <string name="crash_info">發生意外錯誤\n抱歉給您帶來不便</string>
