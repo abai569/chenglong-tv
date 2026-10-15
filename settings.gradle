@@ -1,4 +1,8 @@
 pluginManagement {
+    // FongMi's Media3 fork is consumed as an included build (see README of
+    // androidx/media). The checkout lives in third_party/media3 and is fetched
+    // by CI before the build; see .github/workflows/build.yml.
+    includeBuild("third_party/media3/build-logic-settings")
     repositories {
         gradlePluginPortal()
         mavenCentral()
@@ -8,18 +12,22 @@ pluginManagement {
 
 plugins {
     id "org.gradle.toolchains.foojay-resolver-convention" version "1.0.0"
+    id "gradlebuild.media3-settings-logic"
 }
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        maven { url = uri("$rootDir/third_party/maven") }
         mavenCentral()
         google()
         flatDir { dirs "$rootDir/app/libs" }
         maven { url = "https://jitpack.io" }
     }
 }
+
+// Any androidx.media3:* coordinate below is served by this local checkout, so
+// the version declared in libs.versions.toml is intentionally ignored.
+includeMedia3.execute(file("third_party/media3"))
 
 include ':app'
 include ':catvod'

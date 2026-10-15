@@ -37,6 +37,18 @@ jobs:
           which python3.10 || true
           python3.10 --version
 
+      - name: Fetch FongMi Media3 fork (Gradle included build)
+        run: |
+          set -e
+          # This app consumes androidx.media3:* from FongMi's fork. The libass /
+          # secondary-text revisions of the fork are not published publicly, so the
+          # branch pinned here is the one matching this app revision.
+          git clone --depth 1 --branch release-1.11.0-fongmi \
+            https://github.com/FongMi/media.git third_party/media3
+          echo "sdk.dir=${ANDROID_SDK_ROOT:-${ANDROID_HOME}}" > third_party/media3/local.properties
+          cat third_party/media3/local.properties
+          ls third_party/media3
+
       - name: Prepare signing config
         env:
           KEYSTORE_B64: ${{ secrets.RELEASE_KEYSTORE }}

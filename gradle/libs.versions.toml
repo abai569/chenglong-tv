@@ -77,6 +77,7 @@ media3-extractor = { group = "androidx.media3", name = "media3-extractor", versi
 media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
 media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }
 media3-ui-danmaku = { group = "androidx.media3", name = "media3-ui-danmaku", version.ref = "media3" }
+media3-mpvplayer = { group = "androidx.media3", name = "media3-mpvplayer", version.ref = "media3" }
 palette = { group = "androidx.palette", name = "palette", version.ref = "palette" }
 preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
@@ -135,5 +136,5 @@ chaquo-python = { id = "com.chaquo.python", version.ref = "python" }
 [bundles]
 glide = ["glide", "glide-annotations", "glide-avif-integration", "glide-okhttp3-integration"]
 jupnp = ["org-jupnp", "org-jupnp-android", "org-jupnp-support"]
-media3 = ["media3-common", "media3-container", "media3-database", "media3-datasource", "media3-datasource-okhttp", "media3-datasource-rtmp", "media3-decoder", "media3-effect", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-exoplayer-rtsp", "media3-exoplayer-smoothstreaming", "media3-extractor", "media3-session", "media3-ui", "media3-ui-danmaku"]
+media3 = ["media3-common", "media3-container", "media3-database", "media3-datasource", "media3-datasource-okhttp", "media3-datasource-rtmp", "media3-decoder", "media3-effect", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-exoplayer-rtsp", "media3-exoplayer-smoothstreaming", "media3-extractor", "media3-session", "media3-ui", "media3-ui-danmaku", "media3-mpvplayer"]
 okhttp = ["okhttp", "okhttp-dnsoverhttps", "okhttp-logging-interceptor"]
