@@ -1,0 +1,115 @@
+name: Build APKs
+
+on:
+  push:
+    branches: [fongmi]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Set up Python 3.10 (required by Chaquopy)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Verify Python for Chaquopy
+        run: |
+          which python3.10 || true
+          python3.10 --version
+
+      - name: Prepare signing config
+        env:
+          KEYSTORE_B64: ${{ secrets.RELEASE_KEYSTORE }}
+          KS_PASS: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: |
+          set -e
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "✅ 使用正式签名（RELEASE_KEYSTORE secret 已配置）"
+            printf '%s' "$KEYSTORE_B64" | tr -d ' \t\r\n' | base64 -d > release.keystore
+            ALIAS="$KEY_ALIAS"
+            SP="$KS_PASS"
+            KP="$KEY_PASS"
+          else
+            echo "::warning::未配置 RELEASE_KEYSTORE，使用临时签名，发布产物将无法覆盖更新！"
+            keytool -genkeypair \
+              -keystore release.keystore \
+              -alias chenglong \
+              -keyalg RSA -keysize 2048 \
+              -validity 10000 \
+              -storepass "temp123456" \
+              -keypass "temp123456" \
+              -dname "CN=ChengLong TV, OU=Dev, O=ChengLong, L=Beijing, ST=Beijing, C=CN"
+            ALIAS=chenglong
+            SP=temp123456
+            KP=temp123456
+          fi
+          {
+            echo "storeFile=release.keystore"
+            echo "keyAlias=$ALIAS"
+            echo "storePassword=$SP"
+            echo "keyPassword=$KP"
+          } > local.properties
+          echo "--- local.properties ---"
+          sed 's/Password=.*/Password=***/' local.properties
+          keytool -list -keystore release.keystore -storepass "$SP" | head -20
+
+      - name: Build Leanback APKs
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleLeanbackRelease --no-daemon
+
+      - name: Collect APKs
+        run: |
+          mkdir -p release-apks
+          find app/build/outputs/apk/leanback/release -name "*.apk" -exec cp {} release-apks/ \;
+          ls -lh release-apks/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: chenglong-tv-apks
+          path: release-apks/*.apk
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: 橙龙影视 ${{ github.ref_name }}
+          body: |
+            ## 橙龙影视 ${{ github.ref_name }}
+            
+            ### 内置线路
+            - 主线路：橙龙线路（多仓）
+            - 备用线路：kstore 多仓
+            
+            ### APK 说明
+            - `leanback-arm64_v8a.apk` — 64位 ARM 设备（大多数新电视/盒子）
+            - `leanback-armeabi_v7a.apk` — 32位 ARM 设备（老旧电视/盒子）
+            
+            ### 签名信息
+            - 使用正式签名，可覆盖安装更新
+          files: release-apks/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

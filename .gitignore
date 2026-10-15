@@ -1,10 +1,10 @@
 .idea
 .vscode
 .gradle
-.github
 .settings
 *build
 *.jks
+*.keystore
 *.properties
 lib-*.aar
 /Release

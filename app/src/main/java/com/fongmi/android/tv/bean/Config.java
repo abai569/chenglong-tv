@@ -90,14 +90,22 @@ public class Config {
         AppDatabase.get().getConfigDao().delete(url, type);
     }
 
+    // 橙龙影视 - 内置默认线路
+    private static final String DEFAULT_VOD_URL = "https://chfs.646321.xyz:8/chfs/shared/oktv/d.json";
+    private static final String DEFAULT_VOD_BACKUP_URL = "https://d.kstore.dev/download/7708/d.json";
+
     public static Config vod() {
         Config item = AppDatabase.get().getConfigDao().findOne(0);
-        return item == null ? create(0) : item;
+        return item == null ? create(0, DEFAULT_VOD_URL, "橙龙线路") : item;
     }
 
     public static Config live() {
         Config item = AppDatabase.get().getConfigDao().findOne(1);
         return item == null ? create(1) : item;
+    }
+
+    public static String getDefaultBackupUrl() {
+        return DEFAULT_VOD_BACKUP_URL;
     }
 
     public static Config wall() {
