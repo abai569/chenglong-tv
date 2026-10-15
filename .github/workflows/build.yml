@@ -87,23 +87,22 @@ jobs:
           sed 's/Password=.*/Password=***/' local.properties
           keytool -list -keystore app/release.keystore -storepass "$SP" | head -20
 
-      - name: Build TV (leanback) and phone (mobile) APKs
+      - name: Build APKs
         run: |
           chmod +x gradlew
           ./gradlew -I .github/force-annotations.init.gradle \
             assembleLeanbackRelease assembleMobileRelease --no-daemon
 
-      - name: Collect and rename APKs
+      - name: Collect APKs
         run: |
           set -e
           mkdir -p release-apks
-          # TV flavour  -> chenglongtv-<abi>.apk
-          # phone flavour -> chenglong-<abi>.apk
-          # <abi> is the CPU architecture, NOT the device type: v8a is 64-bit, v7a is 32-bit.
-          for abi in arm64_v8a armeabi_v7a; do
-            cp "app/build/outputs/apk/leanback/release/leanback-${abi}.apk" "release-apks/chenglongtv-${abi}.apk"
-            cp "app/build/outputs/apk/mobile/release/mobile-${abi}.apk" "release-apks/chenglong-${abi}.apk"
-          done
+          # 只发布两个组合：手机 64 位、电视 32 位。
+          # 每个包都同时包含两个 flavor 的产物，这里按需挑选并重命名。
+          cp "app/build/outputs/apk/mobile/release/mobile-arm64_v8a.apk" \
+             "release-apks/chenglong-arm64_v8a.apk"
+          cp "app/build/outputs/apk/leanback/release/leanback-armeabi_v7a.apk" \
+             "release-apks/chenglongtv-armeabi_v7a.apk"
           ls -lh release-apks/
 
       - name: Upload artifacts
@@ -124,19 +123,21 @@ jobs:
             - 主线路：橙龙线路（多仓）
             - 备用线路：kstore 多仓
 
-            ### APK 说明（先选端，再看 CPU 架构）
-            | 文件 | 端 | CPU 架构 |
-            | --- | --- | --- |
-            | `chenglongtv-arm64_v8a.apk` | 电视版 | 64 位 ARM（多数新电视/盒子） |
-            | `chenglongtv-armeabi_v7a.apk` | 电视版 | 32 位 ARM（老旧设备） |
-            | `chenglong-arm64_v8a.apk` | 手机版 | 64 位 ARM（多数手机） |
-            | `chenglong-armeabi_v7a.apk` | 手机版 | 32 位 ARM（老旧手机） |
+            ### APK 说明
+            | 文件 | 适用设备 |
+            | --- | --- |
+            | `chenglong-arm64_v8a.apk` | 手机（64 位 ARM） |
+            | `chenglongtv-armeabi_v7a.apk` | 电视 / 盒子（32 位 ARM） |
 
-            > `arm64_v8a` / `armeabi_v7a` 是 CPU 架构，不是端；电视版与手机版的区别在 UI。
-            > 不确定 64 位还是 32 位时，先装 `arm64_v8a`，装不上再换 `armeabi_v7a`。
+            > `arm64_v8a` / `armeabi_v7a` 是 CPU 架构，不是端。当前只发布"手机 64 位"和"电视 32 位"两个组合；
+            > 若你的电视盒子是 64 位、或手机是 32 位，反馈后可按需补出对应包。
 
             ### 签名信息
             - 使用正式签名，可覆盖安装更新
+
+            ### 版本
+            - 应用版本：`${{ github.ref_name }}`（设置页「版本」显示同一号）
+            - 内核基于上游 FongMi/TV `fe6a5b235`（5.6.1 基线）
           files: release-apks/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
