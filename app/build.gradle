@@ -71,12 +71,6 @@ android {
         exclude group: 'io.antmedia', module: 'rtmp-client'
         resolutionStrategy {
             force libs.okhttp
-            eachDependency { details ->
-                if (details.requested.group == 'androidx.media3') {
-                    details.useVersion(libs.versions.media3.get())
-                    details.because('Use vendored Media3 build with mpvplayer and danmaku APIs')
-                }
-            }
         }
     }
 
