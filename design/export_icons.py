@@ -17,8 +17,8 @@ except ImportError:
     np = None
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC_C = os.path.join(ROOT, "design", "source", "dragon-frontal.jpg")   # C 正面龙脸
-SRC_A = os.path.join(ROOT, "design", "source", "dragon-side.jpg")      # A 侧龙盘橙
+SRC_C = os.path.join(ROOT, "design", "source", "dragon-frontal.webp")   # C 正面龙脸（无白边）
+SRC_A = os.path.join(ROOT, "design", "source", "dragon-side.webp")      # A 侧龙盘橙（无白边）
 
 
 def extract_foreground(img):
@@ -60,10 +60,10 @@ def make_round_icon(src_img, size):
     return canvas
 
 
-def make_adaptive_fg(src_img, size=432):
-    """自适应图标前景：整图缩放到安全区 66%。"""
+def make_adaptive_fg(src_img, size=432, scale_factor=0.50):
+    """自适应图标前景：整图缩放到指定比例（默认 50%，比安全区 66% 小，避免 splash 图标过大）。"""
     canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    target = int(size * 0.66)
+    target = int(size * scale_factor)
     scale = target / max(src_img.width, src_img.height)
     nw = max(1, int(round(src_img.width * scale)))
     nh = max(1, int(round(src_img.height * scale)))
