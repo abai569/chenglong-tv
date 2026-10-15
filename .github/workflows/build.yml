@@ -47,14 +47,14 @@ jobs:
           set -e
           if [ -n "$KEYSTORE_B64" ]; then
             echo "✅ 使用正式签名（RELEASE_KEYSTORE secret 已配置）"
-            printf '%s' "$KEYSTORE_B64" | tr -d ' \t\r\n' | base64 -d > release.keystore
+            printf '%s' "$KEYSTORE_B64" | tr -d ' \t\r\n' | base64 -d > app/release.keystore
             ALIAS="$KEY_ALIAS"
             SP="$KS_PASS"
             KP="$KEY_PASS"
           else
             echo "::warning::未配置 RELEASE_KEYSTORE，使用临时签名，发布产物将无法覆盖更新！"
             keytool -genkeypair \
-              -keystore release.keystore \
+              -keystore app/release.keystore \
               -alias chenglong \
               -keyalg RSA -keysize 2048 \
               -validity 10000 \
@@ -73,7 +73,7 @@ jobs:
           } > local.properties
           echo "--- local.properties ---"
           sed 's/Password=.*/Password=***/' local.properties
-          keytool -list -keystore release.keystore -storepass "$SP" | head -20
+          keytool -list -keystore app/release.keystore -storepass "$SP" | head -20
 
       - name: Build Leanback APKs
         run: |
