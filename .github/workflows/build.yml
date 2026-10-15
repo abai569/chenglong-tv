@@ -90,7 +90,7 @@ jobs:
       - name: Build Leanback APKs
         run: |
           chmod +x gradlew
-          ./gradlew assembleLeanbackRelease --no-daemon
+          ./gradlew -I .github/force-annotations.init.gradle assembleLeanbackRelease --no-daemon
 
       - name: Collect APKs
         run: |

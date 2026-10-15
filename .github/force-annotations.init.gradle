@@ -1,0 +1,23 @@
+// Gradle's embedded Kotlin pins org.jetbrains:annotations with a strict 13.0
+// constraint ("Pinned to the embedded Kotlin"), while FongMi's Media3 build-logic
+// resolves 23.x. Without relaxing that pin, the included build's classpath cannot
+// be resolved at all and every task fails with:
+//   Could not resolve org.jetbrains:annotations:{strictly 13.0}
+//
+// Init scripts run before settings evaluation, so this covers the settings
+// buildscript (where the Media3 build-logic is loaded) as well as every project
+// buildscript in the root build and in included builds.
+
+def relax = { configurations ->
+    configurations.configureEach { configuration ->
+        configuration.resolutionStrategy.force 'org.jetbrains:annotations:23.0.0'
+    }
+}
+
+beforeSettings { settings ->
+    relax(settings.buildscript.configurations)
+}
+
+allprojects { project ->
+    relax(project.buildscript.configurations)
+}
