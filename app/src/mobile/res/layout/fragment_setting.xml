@@ -441,13 +441,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="#CC000000"
             android:gravity="center"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:text="BUG反馈/定制软件联系微信：abai531"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textColor="@color/black_50"
+            android:textSize="11sp" />
 
     </FrameLayout>
 </androidx.appcompat.widget.LinearLayoutCompat>

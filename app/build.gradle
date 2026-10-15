@@ -21,8 +21,8 @@ android {
         targetSdk libs.versions.targetSdk.get().toInteger()
         // 发版号与 Release tag 保持一致，便于用户核对；编码规则：主*10000 + 次*100 + 修订。
         // 必须单调递增，否则无法覆盖安装（历史值 561 来自上游基线）。
-        versionCode 10003
-        versionName "1.0.3"
+        versionCode 10004
+        versionName "1.0.4"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString(), "eventBusIndex": "com.fongmi.android.tv.event.EventIndex"]
