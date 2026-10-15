@@ -11,6 +11,10 @@
 def relax = { configurations ->
     configurations.configureEach { configuration ->
         configuration.resolutionStrategy.force 'org.jetbrains:annotations:23.0.0'
+        // FongMi's Media3 build-logic is pinned to AGP 9.0.1 while this app uses
+        // 9.3.1. AGP refuses to have two versions on one classpath, so align the
+        // included build onto the version this project is built with.
+        configuration.resolutionStrategy.force 'com.android.tools.build:gradle:9.3.1'
     }
 }
 
