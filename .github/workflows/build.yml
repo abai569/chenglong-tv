@@ -97,12 +97,17 @@ jobs:
         run: |
           set -e
           mkdir -p release-apks
+          # 版本号取自 tag（v1.0.4 -> 1.0.4），非 tag 构建则回退到 gradle 版本号。
+          VER="${GITHUB_REF_NAME#v}"
+          if [ -z "$VER" ] || [ "$VER" = "$GITHUB_REF_NAME" ]; then
+            VER=$(grep -oP 'versionName\s+"\K[^"]+' app/build.gradle)
+          fi
+          echo "VERSION=$VER" >> "$GITHUB_ENV"
           # 只发布两个组合：手机 64 位、电视 32 位。
-          # 每个包都同时包含两个 flavor 的产物，这里按需挑选并重命名。
           cp "app/build/outputs/apk/mobile/release/mobile-arm64_v8a.apk" \
-             "release-apks/chenglong-arm64_v8a.apk"
+             "release-apks/chenglong_${VER}_arm64_v8a.apk"
           cp "app/build/outputs/apk/leanback/release/leanback-armeabi_v7a.apk" \
-             "release-apks/chenglongtv-armeabi_v7a.apk"
+             "release-apks/chenglong_${VER}_armeabi_v7a.apk"
           ls -lh release-apks/
 
       - name: Upload artifacts
@@ -126,8 +131,10 @@ jobs:
             ### APK 说明
             | 文件 | 适用设备 |
             | --- | --- |
-            | `chenglong-arm64_v8a.apk` | 手机（64 位 ARM） |
-            | `chenglongtv-armeabi_v7a.apk` | 电视 / 盒子（32 位 ARM） |
+            | `chenglong_${{ env.VERSION }}_arm64_v8a.apk` | 手机（64 位 ARM） |
+            | `chenglong_${{ env.VERSION }}_armeabi_v7a.apk` | 电视 / 盒子（32 位 ARM） |
+
+            > 文件名中的版本号取自 tag 去掉 `v` 前缀（tag `v1.0.4` → `chenglong_1.0.4_arm64_v8a.apk`）。
 
             > `arm64_v8a` / `armeabi_v7a` 是 CPU 架构，不是端。当前只发布"手机 64 位"和"电视 32 位"两个组合；
             > 若你的电视盒子是 64 位、或手机是 32 位，反馈后可按需补出对应包。
