@@ -3,6 +3,10 @@ name: Build APKs
 on:
   push:
     branches: [fongmi]
+    # update.json 由本 workflow 在发版后自动提交，必须忽略，否则每次发版都会
+    # 因为它自己的提交再触发一轮无用构建。
+    paths-ignore:
+      - 'update.json'
     tags: ['v*']
   workflow_dispatch:
 
