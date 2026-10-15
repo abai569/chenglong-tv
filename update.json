@@ -1,0 +1,7 @@
+{
+  "name": "1.0.5",
+  "code": 10005,
+  "desc": "橙龙影视 1.0.5",
+  "arm64_v8a": "https://github.com/abai569/chenglong-tv/releases/download/v1.0.5/chenglong_1.0.5_arm64_v8a.apk",
+  "armeabi_v7a": "https://github.com/abai569/chenglong-tv/releases/download/v1.0.5/chenglong_1.0.5_armeabi_v7a.apk"
+}
