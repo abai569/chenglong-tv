@@ -120,6 +120,17 @@ jobs:
           name: chenglong-apks
           path: release-apks/*.apk
 
+      - name: Read built-in line sources from Config.java
+        run: |
+          set -e
+          CFG="app/src/main/java/com/fongmi/android/tv/bean/Config.java"
+          PRIMARY=$(grep -oP 'DEFAULT_VOD_URL\s*=\s*"\K[^"]+' "$CFG")
+          BACKUP=$(grep -oP 'DEFAULT_VOD_BACKUP_URL\s*=\s*"\K[^"]+' "$CFG")
+          echo "PRIMARY_LINE=$PRIMARY" >> "$GITHUB_ENV"
+          echo "BACKUP_LINE=$BACKUP"   >> "$GITHUB_ENV"
+          echo "主线路: $PRIMARY"
+          echo "备用线路: $BACKUP"
+
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
@@ -129,8 +140,8 @@ jobs:
             ## 橙龙影视 ${{ github.ref_name }}
 
             ### 内置线路
-            - 主线路：橙龙线路（多仓）
-            - 备用线路：kstore 多仓
+            - 主线路：橙龙线路 —— `${{ env.PRIMARY_LINE }}`
+            - 备用线路 —— `${{ env.BACKUP_LINE }}`
 
             ### APK 说明
             | 文件 | 适用设备 |
