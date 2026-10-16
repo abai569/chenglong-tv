@@ -91,8 +91,8 @@ public class Config {
     }
 
     // 橙龙影视 - 内置默认线路
-    private static final String DEFAULT_VOD_URL = "https://chfs.646321.xyz:8/chfs/shared/oktv/d.json";
-    private static final String DEFAULT_VOD_BACKUP_URL = "https://d.kstore.dev/download/7708/d.json";
+    private static final String DEFAULT_VOD_URL = "https://gitee.com/abai569/files/raw/main/oktv/d.json";
+    private static final String DEFAULT_VOD_BACKUP_URL = "https://chfs.646321.xyz:8/chfs/shared/oktv/d.json";
 
     public static Config vod() {
         Config item = AppDatabase.get().getConfigDao().findOne(0);
